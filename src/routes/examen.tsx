@@ -20,7 +20,7 @@ export const Route = createFileRoute("/examen")({
       },
     ],
   }),
-  component: Examen;
+  component: Examen,
 });
 
 type Orden = "horizontal" | "vertical";
