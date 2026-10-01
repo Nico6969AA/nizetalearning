@@ -105,7 +105,7 @@ export const MNEMOTECNIAS: Mnemotecnia[] = [
     subtitulo: "Transición",
     acento: "sky",
     frases: [
-      "*Y*o *Z*umo Na*r*anjas, *N*aranjas *b*onitas, *Mo*jo *T*os*C*adas, *Ru*th *R*íe, *P*i*D*e *Ag*ua y *C*ome *D*átiles.",
+      "*Y*o *Z*umo *N*aranjas, *Mo*jo *T*os*C*adas, *Ru*th *R*íe, *P*i*D*e *Ag*ua y *C*ome *D*átiles.",
     ],
     simbolos: ["Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd"],
   },
@@ -115,7 +115,7 @@ export const MNEMOTECNIAS: Mnemotecnia[] = [
     subtitulo: "Transición",
     acento: "sky",
     frases: [
-      "*H*oy Tambié*f*n, *Ta*mbién *W*alter *Re*coge *Os*os, *Ir*ene *P*iensa *A*umentar *Hg*.",
+      "*Hoy* *Ta*mbién *W*alter *Re*coge *Os*os, *Ir*ene *P*iensa *A*umentar *Hg*.",
     ],
     simbolos: ["Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg"],
   },
