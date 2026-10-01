@@ -25,7 +25,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const [elegido, setElegido] = useState<Elemento>(ELEMENTOS[0]);
+  const [elegido, setElegido] = useState<Elemento>(ELEMENTOS[0] as Elemento);
   const regla = mnemotecniaDe(elegido.simbolo);
 
   return (
@@ -79,7 +79,7 @@ function Index() {
               {regla.titulo} · {regla.subtitulo}
             </p>
             <p className="mt-1.5 text-[15px] leading-relaxed text-foreground/90">
-              {trozos(regla.frases[0]).map((t, i) => (
+              {trozos(regla.frases[0] ?? "").map((t, i) => (
                 <span key={i} className={t.resaltado ? "font-semibold text-glow" : undefined}>
                   {t.texto}
                 </span>

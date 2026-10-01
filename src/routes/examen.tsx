@@ -81,6 +81,7 @@ function Examen() {
   function siguiente(z: number) {
     const i = secuencia.findIndex((el) => el.z === z);
     const sig = secuencia[(i + 1) % secuencia.length];
+    if (!sig) return;
     refs.current[sig.z]?.focus();
     refs.current[sig.z]?.select();
   }
@@ -200,7 +201,7 @@ function Examen() {
                       {regla.titulo} · {n} {n === 1 ? "fallo" : "fallos"}
                     </p>
                     <p className="mt-1 text-sm leading-relaxed text-foreground/90">
-                      {trozos(regla.frases[0]).map((t, i) => (
+                      {trozos(regla.frases[0] ?? "").map((t, i) => (
                         <span
                           key={i}
                           className={t.resaltado ? "font-semibold text-glow" : undefined}
