@@ -1,0 +1,3 @@
+- [ ] Visualizar en 3D el átomo seleccionado, sus nucleones, electrones y quarks.
+- [ ] Alternar a orbitales cuánticos con nubes de probabilidad.
+- [ ] Verificar la interacción y el renderizado en ordenador y móvil.
