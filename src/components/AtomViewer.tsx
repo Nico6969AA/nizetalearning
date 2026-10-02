@@ -10,7 +10,6 @@ import type { Elemento } from "@/data/elements";
 type Mode = "particulas" | "cuantico";
 type Nucleon = "proton" | "neutron";
 type Palette = { proton: string; neutron: string; electron: string; up: string; down: string; cloud: string; backdrop: string };
-const FALLBACK: Palette = { proton: "#e891a1", neutron: "#f2c981", electron: "#8ae0d0", up: "#8ae0d0", down: "#87b6ea", cloud: "#aab4f4", backdrop: "#192031" };
 
 function seeded(seed: number) {
   let value = seed >>> 0;
@@ -133,7 +132,7 @@ export function AtomViewer({ element, onClose }: { element: Elemento; onClose: (
   const [detail, setDetail] = useState<Nucleon | null>(null);
   const [paused, setPaused] = useState(false);
   const [orbitalIndex, setOrbitalIndex] = useState(0);
-  const [palette, setPalette] = useState<Palette>(FALLBACK);
+  const [palette, setPalette] = useState<Palette | null>(null);
   const orbitals = useMemo(() => orbitalsFor(element.z), [element.z]);
   const activeOrbital = orbitals[orbitalIndex] ?? orbitals[0];
   const mass = ATOMIC_DATA[element.z - 1]?.mass ?? element.z;
@@ -152,7 +151,7 @@ export function AtomViewer({ element, onClose }: { element: Elemento; onClose: (
       <Button type="button" size="sm" variant={mode === "cuantico" ? "default" : "outline"} onClick={() => { setMode("cuantico"); setDetail(null); }}>Cuántico</Button>
     </div>
     <div className="relative h-[360px] w-full overflow-hidden rounded-md border border-border bg-card sm:h-[460px]">
-      {activeOrbital && <Canvas key={element.z} dpr={[1, 1.5]} camera={{ position: [0, 1.5, 11], fov: 48 }} gl={{ antialias: true }}>
+      {activeOrbital && palette && <Canvas key={element.z} dpr={[1, 1.5]} camera={{ position: [0, 1.5, 11], fov: 48 }} gl={{ antialias: true }}>
         <AtomScene element={element} mode={mode} orbital={activeOrbital} detail={detail} palette={palette} paused={paused} onSelect={setDetail} />
       </Canvas>}
       <div className="pointer-events-none absolute bottom-3 left-3 flex flex-wrap gap-1.5 font-mono text-[10px]">

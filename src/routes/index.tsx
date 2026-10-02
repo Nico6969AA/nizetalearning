@@ -19,6 +19,8 @@ export const Route = createFileRoute("/")({
           "Explora los 118 elementos coloreados por familia y descubre la regla mnemotécnica de cada uno.",
       },
       { property: "og:title", content: "Nizeta — La tabla periódica interactiva" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       {
         property: "og:description",
         content: "Explora los 118 elementos coloreados por familia y sus reglas mnemotécnicas.",
