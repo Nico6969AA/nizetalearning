@@ -13,6 +13,8 @@ export const Route = createFileRoute("/examen")({
         content:
           "Rellena la tabla periódica muda escribiendo cada símbolo y comprueba tus aciertos, fallos y sugerencias.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:title", content: "Examen — Tabla periódica muda | Nizeta" },
       {
         property: "og:description",

@@ -10,6 +10,8 @@ export const Route = createFileRoute("/aprender")({
         content:
           "Reglas mnemotécnicas para memorizar cada grupo y período de la tabla periódica, con las letras de los símbolos resaltadas.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:title", content: "Aprender — Reglas mnemotécnicas | Nizeta" },
       {
         property: "og:description",

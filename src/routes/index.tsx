@@ -1,9 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { Box } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { PeriodicGrid } from "@/components/PeriodicGrid";
 import { COLOR_CATEGORIA, Leyenda } from "@/components/ElementCell";
 import { ELEMENTOS, type Elemento } from "@/data/elements";
 import { mnemotecniaDe, trozos } from "@/data/mnemonics";
+
+const AtomViewer = lazy(() => import("@/components/AtomViewer").then((module) => ({ default: module.AtomViewer })));
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -15,6 +19,8 @@ export const Route = createFileRoute("/")({
           "Explora los 118 elementos coloreados por familia y descubre la regla mnemotécnica de cada uno.",
       },
       { property: "og:title", content: "Nizeta — La tabla periódica interactiva" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       {
         property: "og:description",
         content: "Explora los 118 elementos coloreados por familia y sus reglas mnemotécnicas.",
@@ -26,6 +32,9 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const [elegido, setElegido] = useState<Elemento>(ELEMENTOS[0] as Elemento);
+  const [visible, setVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const regla = mnemotecniaDe(elegido.simbolo);
 
   return (
@@ -45,7 +54,8 @@ function Index() {
             return (
               <button
                 type="button"
-                onClick={() => setElegido(el)}
+                onClick={() => { setElegido(el); setVisible(true); }}
+                aria-label={`Explorar átomo de ${el.nombre}`}
                 className={`flex aspect-square w-full flex-col items-center justify-center rounded-[3px] leading-none transition-transform hover:scale-110 ${c.fondo} ${
                   activo ? "ring-1 ring-glow" : ""
                 }`}
@@ -73,6 +83,8 @@ function Index() {
           {elegido.fila <= 7 ? elegido.col : "bloque f"}
         </p>
 
+        <Button type="button" size="sm" className="mt-4" onClick={() => setVisible(true)}><Box className="size-4" /> Ver átomo en 3D</Button>
+
         {regla ? (
           <div className="mt-4 border-t border-border pt-3">
             <p className="font-mono text-[10px] uppercase tracking-wider text-glow">
@@ -91,6 +103,7 @@ function Index() {
             Este elemento no entra en las reglas mnemotécnicas de Nizeta.
           </p>
         )}
+        {mounted && visible && <Suspense fallback={<p className="mt-5 text-sm text-mist">Cargando átomo…</p>}><AtomViewer element={elegido} onClose={() => setVisible(false)} /></Suspense>}
       </section>
     </>
   );

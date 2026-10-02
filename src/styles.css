@@ -81,6 +81,14 @@
   --sky: oklch(0.75 0.11 245);
   --lime: oklch(0.85 0.13 130);
   --iris: oklch(0.76 0.13 300);
+
+  --atom-proton: #e891a1;
+  --atom-neutron: #f2c981;
+  --atom-electron: #8ae0d0;
+  --atom-up: #8ae0d0;
+  --atom-down: #87b6ea;
+  --atom-cloud: #aab4f4;
+  --atom-backdrop: #192031;
 }
 
 @utility glass {
