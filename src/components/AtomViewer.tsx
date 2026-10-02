@@ -20,38 +20,6 @@ function seeded(seed: number) {
   };
 }
 
-function Points({ count, radius, color, onSelect }: { count: number; radius: number; color: string; onSelect: (part: Nucleon) => void }) {
-  const protons = useRef<THREE.InstancedMesh>(null);
-  const neutrons = useRef<THREE.InstancedMesh>(null);
-  const neutronCount = Math.max(0, count - Math.floor(count / 2));
-  const protonCount = count - neutronCount;
-  useEffect(() => {
-    const rng = seeded(count + 814);
-    const dummy = new THREE.Object3D();
-    for (let i = 0; i < count; i++) {
-      const r = Math.cbrt((i + 0.5) / count) * radius;
-      const y = 1 - 2 * rng();
-      const a = rng() * Math.PI * 2;
-      const rr = Math.sqrt(1 - y * y);
-      dummy.position.set(r * rr * Math.cos(a), r * y, r * rr * Math.sin(a));
-      dummy.scale.setScalar(Math.min(0.26, 0.54 / Math.cbrt(count)));
-      dummy.updateMatrix();
-      const target = i < protonCount ? protons.current : neutrons.current;
-      target?.setMatrixAt(i < protonCount ? i : i - protonCount, dummy.matrix);
-    }
-    if (protons.current) protons.current.instanceMatrix.needsUpdate = true;
-    if (neutrons.current) neutrons.current.instanceMatrix.needsUpdate = true;
-  }, [count, radius, protonCount]);
-  return <>
-    <instancedMesh ref={protons} args={[undefined, undefined, protonCount]} onClick={(e) => { e.stopPropagation(); onSelect("proton"); }}>
-      <sphereGeometry args={[1, 10, 8]} /><meshStandardMaterial color={color} roughness={0.35} metalness={0.18} />
-    </instancedMesh>
-    <instancedMesh ref={neutrons} args={[undefined, undefined, neutronCount]} onClick={(e) => { e.stopPropagation(); onSelect("neutron"); }}>
-      <sphereGeometry args={[1, 10, 8]} /><meshStandardMaterial color={FALLBACK.neutron} roughness={0.35} metalness={0.18} />
-    </instancedMesh>
-  </>;
-}
-
 function Nucleus({ protons, neutrons, palette, onSelect }: { protons: number; neutrons: number; palette: Palette; onSelect: (part: Nucleon) => void }) {
   const total = protons + neutrons;
   const radius = 0.38 + 0.13 * Math.cbrt(total);
