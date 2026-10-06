@@ -1,46 +1,38 @@
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Lightformer, OrbitControls } from "@react-three/drei";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, RotateCcw, X } from "lucide-react";
 import * as THREE from "three";
 import { Button } from "@/components/ui/button";
 import { ATOMIC_DATA, orbitalsFor, type Orbital } from "@/data/atomic";
+import { orbitalExtent, orbitalPoints, packedNucleus } from "@/data/atomic-view";
 import type { Elemento } from "@/data/elements";
 
 type Mode = "particulas" | "cuantico";
 type Nucleon = "proton" | "neutron";
 type Palette = { proton: string; neutron: string; electron: string; up: string; down: string; cloud: string; backdrop: string };
 
-function seeded(seed: number) {
-  let value = seed >>> 0;
-  return () => {
-    value = (Math.imul(value, 1664525) + 1013904223) >>> 0;
-    return value / 4294967296;
-  };
-}
-
 function Nucleus({ protons, neutrons, palette, onSelect }: { protons: number; neutrons: number; palette: Palette; onSelect: (part: Nucleon) => void }) {
   const total = protons + neutrons;
-  const radius = 0.38 + 0.13 * Math.cbrt(total);
   const p = useRef<THREE.InstancedMesh>(null);
   const n = useRef<THREE.InstancedMesh>(null);
   useEffect(() => {
-    const rng = seeded(protons * 919 + neutrons);
+    const { particleRadius, positions } = packedNucleus(total);
     const dummy = new THREE.Object3D();
+    let protonIndex = 0, neutronIndex = 0;
     for (let i = 0; i < total; i++) {
-      const r = Math.cbrt((i + 0.5) / total) * radius;
-      const y = 1 - 2 * rng();
-      const a = rng() * Math.PI * 2;
-      const rr = Math.sqrt(1 - y * y);
-      dummy.position.set(r * rr * Math.cos(a), r * y, r * rr * Math.sin(a));
-      dummy.scale.setScalar(Math.min(0.23, 0.53 / Math.cbrt(total)));
+      const position = positions[i];
+      if (!position) continue;
+      dummy.position.set(position[0] ?? 0, position[1] ?? 0, position[2] ?? 0);
+      dummy.scale.setScalar(particleRadius);
       dummy.updateMatrix();
-      const target = i < protons ? p.current : n.current;
-      target?.setMatrixAt(i < protons ? i : i - protons, dummy.matrix);
+      const isProton = Math.floor((i + 1) * protons / total) > Math.floor(i * protons / total);
+      if (isProton) p.current?.setMatrixAt(protonIndex++, dummy.matrix);
+      else n.current?.setMatrixAt(neutronIndex++, dummy.matrix);
     }
     if (p.current) p.current.instanceMatrix.needsUpdate = true;
     if (n.current) n.current.instanceMatrix.needsUpdate = true;
-  }, [protons, neutrons, radius, total]);
+  }, [protons, neutrons, total]);
   return <group>
     <instancedMesh ref={p} args={[undefined, undefined, protons]} onClick={(e) => { e.stopPropagation(); onSelect("proton"); }}>
       <sphereGeometry args={[1, 12, 10]} /><meshStandardMaterial color={palette.proton} metalness={0.1} roughness={0.4} />
@@ -86,26 +78,38 @@ function QuarkDetail({ part, palette, paused }: { part: Nucleon; palette: Palett
 
 function Cloud({ orbital, palette }: { orbital: Orbital; palette: Palette }) {
   const geometry = useMemo(() => {
-    const rng = seeded(orbital.level * 100 + orbital.kind.charCodeAt(0));
-    const coords: number[] = [];
-    const count = 2400;
-    const radius = 1.2 + orbital.level * 0.38;
-    while (coords.length < count * 3) {
-      const x = (rng() * 2 - 1), y = (rng() * 2 - 1), z = (rng() * 2 - 1);
-      const r = Math.hypot(x, y, z);
-      if (r > 1 || r < 0.05) continue;
-      const angular = orbital.kind === "s" ? 1 : orbital.kind === "p" ? (z * z / (r * r)) : orbital.kind === "d" ? Math.pow((x * x - y * y) / (r * r), 2) : Math.pow(x * y * z / (r * r * r) * 5, 2);
-      const radial = Math.exp(-Math.pow((r - 0.56) * 3.3, 2));
-      if (rng() < angular * radial) coords.push(x * radius, y * radius, z * radius);
-    }
     const result = new THREE.BufferGeometry();
-    result.setAttribute("position", new THREE.Float32BufferAttribute(coords, 3));
+    result.setAttribute("position", new THREE.BufferAttribute(orbitalPoints(orbital), 3));
     return result;
   }, [orbital]);
+  const sprite = useMemo(() => {
+    const size = 32, pixels = new Uint8Array(size * size * 4);
+    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+      const offset = (y * size + x) * 4;
+      const r = Math.hypot((x + 0.5) / size * 2 - 1, (y + 0.5) / size * 2 - 1);
+      pixels.set([255, 255, 255, Math.round(Math.max(0, 1 - r) ** 1.6 * 255)], offset);
+    }
+    const texture = new THREE.DataTexture(pixels, size, size);
+    texture.needsUpdate = true;
+    return texture;
+  }, []);
   useEffect(() => () => geometry.dispose(), [geometry]);
+  useEffect(() => () => sprite.dispose(), [sprite]);
   return <points geometry={geometry}>
-    <pointsMaterial size={0.038} color={palette.cloud} transparent opacity={0.52} depthWrite={false} sizeAttenuation blending={THREE.AdditiveBlending} />
+    <pointsMaterial map={sprite} size={0.07 + orbital.level * 0.008} color={palette.cloud} transparent opacity={0.7} depthWrite={false} sizeAttenuation blending={THREE.AdditiveBlending} />
   </points>;
+}
+
+function SceneFraming({ radius }: { radius: number }) {
+  const { camera, size } = useThree();
+  useEffect(() => {
+    const aspect = size.width / size.height;
+    const distance = Math.max(6, radius * 1.25 / (Math.tan(24 * Math.PI / 180) * Math.min(aspect, 1)));
+    camera.position.set(0, distance * 0.1, distance);
+    camera.lookAt(0, 0, 0);
+    camera.updateProjectionMatrix();
+  }, [camera, radius, size.width, size.height]);
+  return null;
 }
 
 function AtomScene({ element, mode, orbital, detail, palette, paused, onSelect }: { element: Elemento; mode: Mode; orbital: Orbital; detail: Nucleon | null; palette: Palette; paused: boolean; onSelect: (part: Nucleon) => void }) {
@@ -117,13 +121,14 @@ function AtomScene({ element, mode, orbital, detail, palette, paused, onSelect }
   }, [element.z]);
   return <>
     <color attach="background" args={[palette.backdrop]} />
+    <SceneFraming radius={detail ? 2 : mode === "cuantico" ? orbitalExtent(orbital.level) : 1.35 + shells.length * 0.39} />
     <ambientLight intensity={0.75} /><pointLight position={[5, 5, 7]} intensity={45} />
     <Environment><Lightformer intensity={2} position={[0, 5, 3]} scale={[10, 10, 1]} /></Environment>
     {detail ? <QuarkDetail part={detail} palette={palette} paused={paused} /> : <>
       <Nucleus protons={element.z} neutrons={Math.max(0, (data?.mass ?? element.z) - element.z)} palette={palette} onSelect={onSelect} />
       {mode === "particulas" ? shells.map((amount, i) => <ElectronShell key={i} shell={i + 1} amount={amount ?? 0} palette={palette} paused={paused} />) : <Cloud orbital={orbital} palette={palette} />}
     </>}
-    <OrbitControls enablePan={false} minDistance={4.5} maxDistance={18} enableDamping />
+    <OrbitControls key={`${mode}-${orbital.level}-${detail}`} enablePan={false} minDistance={3} maxDistance={30} enableDamping />
   </>;
 }
 
@@ -131,16 +136,24 @@ export function AtomViewer({ element, onClose }: { element: Elemento; onClose: (
   const [mode, setMode] = useState<Mode>("particulas");
   const [detail, setDetail] = useState<Nucleon | null>(null);
   const [paused, setPaused] = useState(false);
-  const [orbitalIndex, setOrbitalIndex] = useState(0);
+  const [orbitalIndex, setOrbitalIndex] = useState(() => {
+    const options = orbitalsFor(element.z);
+    const level = Math.max(...options.map((o) => o.level));
+    return options.findIndex((o) => o.level === level);
+  });
   const [palette, setPalette] = useState<Palette | null>(null);
   const orbitals = useMemo(() => orbitalsFor(element.z), [element.z]);
+  const levels = [...new Set(orbitals.map((o) => o.level))].sort((a, b) => a - b);
   const activeOrbital = orbitals[orbitalIndex] ?? orbitals[0];
   const mass = ATOMIC_DATA[element.z - 1]?.mass ?? element.z;
   useEffect(() => {
     const root = getComputedStyle(document.documentElement);
     setPalette({ proton: root.getPropertyValue("--atom-proton").trim(), neutron: root.getPropertyValue("--atom-neutron").trim(), electron: root.getPropertyValue("--atom-electron").trim(), up: root.getPropertyValue("--atom-up").trim(), down: root.getPropertyValue("--atom-down").trim(), cloud: root.getPropertyValue("--atom-cloud").trim(), backdrop: root.getPropertyValue("--atom-backdrop").trim() });
   }, []);
-  useEffect(() => { setDetail(null); setOrbitalIndex(0); }, [element.z]);
+  useEffect(() => {
+    setDetail(null);
+    setOrbitalIndex(orbitals.findIndex((o) => o.level === Math.max(...orbitals.map((item) => item.level))));
+  }, [orbitals]);
   return <section aria-label={`Átomo de ${element.nombre} en 3D`} className="mt-5 border-t border-border pt-5">
     <div className="mb-3 flex items-start justify-between gap-3">
       <div><p className="font-mono text-[10px] uppercase text-glow">Explorador atómico / {String(element.z).padStart(3, "0")}</p><h2 className="text-xl font-semibold">{element.nombre} <span className="font-mono text-mist">{element.simbolo}</span></h2></div>
@@ -150,10 +163,15 @@ export function AtomViewer({ element, onClose }: { element: Elemento; onClose: (
       <Button type="button" size="sm" variant={mode === "particulas" ? "default" : "outline"} onClick={() => { setMode("particulas"); setDetail(null); }}>Partículas</Button>
       <Button type="button" size="sm" variant={mode === "cuantico" ? "default" : "outline"} onClick={() => { setMode("cuantico"); setDetail(null); }}>Cuántico</Button>
     </div>
+    {mode === "cuantico" && !detail && <div className="mb-3 flex flex-wrap items-center gap-2" role="group" aria-label="Niveles de energía">
+      <span className="text-xs text-mist">Nivel principal</span>
+      {levels.map((level) => <Button key={level} type="button" size="sm" variant={activeOrbital?.level === level ? "default" : "outline"} aria-pressed={activeOrbital?.level === level} onClick={() => setOrbitalIndex(orbitals.findIndex((o) => o.level === level))}>n = {level}</Button>)}
+    </div>}
     <div className="relative h-[360px] w-full overflow-hidden rounded-md border border-border bg-card sm:h-[460px]">
       {activeOrbital && palette && <Canvas key={element.z} dpr={[1, 1.5]} camera={{ position: [0, 1.5, 11], fov: 48 }} gl={{ antialias: true }}>
         <AtomScene element={element} mode={mode} orbital={activeOrbital} detail={detail} palette={palette} paused={paused} onSelect={setDetail} />
       </Canvas>}
+      {mode === "cuantico" && !detail && activeOrbital && <div className="pointer-events-none absolute left-3 top-3 bg-ink/85 px-3 py-2 font-mono text-xs"><span className="text-glow">{activeOrbital.label}</span> · n = {activeOrbital.level}<p className="mt-1 text-[10px] text-mist">{activeOrbital.level - "spdf".indexOf(activeOrbital.kind) - 1} nodos radiales</p></div>}
       <div className="pointer-events-none absolute bottom-3 left-3 flex flex-wrap gap-1.5 font-mono text-[10px]">
         {(detail ? [{ name: "Quark up", color: "bg-glow" }, { name: "Quark down", color: "bg-sky" }] : mode === "particulas" ? [{ name: "Protón", color: "bg-rose" }, { name: "Neutrón", color: "bg-amber" }, { name: "Electrón", color: "bg-glow" }] : [{ name: "Probabilidad", color: "bg-iris" }]).map((item) => <span key={item.name} className="flex items-center gap-1 bg-ink/85 px-2 py-1"><i className={`size-2 rounded-full ${item.color}`} />{item.name}</span>)}
       </div>
@@ -166,13 +184,13 @@ export function AtomViewer({ element, onClose }: { element: Elemento; onClose: (
         {mode === "particulas" ? <><Button type="button" variant="outline" size="sm" onClick={() => setDetail("proton")}>Ver protón</Button><Button type="button" variant="outline" size="sm" onClick={() => setDetail("neutron")} disabled={mass === element.z}>Ver neutrón</Button><span className="font-mono text-xs text-mist">{element.z} p⁺ · {Math.max(0, mass - element.z)} n · {element.z} e⁻</span></> : <>
           <label htmlFor="orbital-select" className="text-sm text-mist">Orbital</label>
           <select id="orbital-select" value={orbitalIndex} onChange={(e) => setOrbitalIndex(Number(e.target.value))} className="rounded-md border border-border bg-card px-2 py-1.5 font-mono text-sm text-foreground">
-            {orbitals.map((o, i) => <option key={o.label} value={i}>{o.label} · {o.electrons} e⁻</option>)}
+            {orbitals.map((o, i) => <option key={o.label} value={i}>{o.label} · n = {o.level} · {o.electrons} e⁻</option>)}
           </select>
           <span className="text-xs text-mist">{activeOrbital?.kind === "s" ? "Nube esférica" : activeOrbital?.kind === "p" ? "Nube bilobular" : activeOrbital?.kind === "d" ? "Nube tetralobular" : "Nube multilobular"}</span>
         </>}
         <Button type="button" variant="ghost" size="icon" className="ml-auto" aria-label={paused ? "Reanudar giro" : "Pausar giro"} title={paused ? "Reanudar giro" : "Pausar giro"} onClick={() => setPaused(!paused)}><RotateCcw className={`size-4 ${paused ? "opacity-40" : ""}`} /></Button>
       </div>
-      <p className="mt-3 text-xs leading-relaxed text-mist">{mode === "particulas" ? "Modelo esquemático: las trayectorias muestran electrones por capa, no órbitas reales. Toca un protón o neutrón para explorar sus quarks." : "Las nubes representan zonas de probabilidad de un orbital, no la trayectoria de un electrón. Su forma es ilustrativa; los orbitales de igual tipo pueden tener distintas orientaciones."}</p>
+      <p className="mt-3 text-xs leading-relaxed text-mist">{mode === "particulas" ? "Modelo esquemático: núcleo y electrones no están a escala. Las trayectorias muestran electrones por capa, no órbitas reales." : "Distribuciones hidrogenoides ilustrativas: n determina el nivel principal y aparecen n − l − 1 nodos radiales. Los niveles superiores se extienden más; la escala está comprimida y el encuadre se adapta. En átomos multielectrónicos la energía también depende del subnivel y del apantallamiento; no son cálculos exactos del elemento."}</p>
     </>}
   </section>;
 }
