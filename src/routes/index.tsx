@@ -26,7 +26,9 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "Explora los 118 elementos coloreados por familia y sus reglas mnemotécnicas.",
       },
+      { property: "og:url", content: "https://nizetalearning.lovable.app/" },
     ],
+    links: [{ rel: "canonical", href: "https://nizetalearning.lovable.app/" }],
   }),
   component: Index,
 });
