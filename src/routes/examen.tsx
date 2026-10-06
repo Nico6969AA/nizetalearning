@@ -20,7 +20,9 @@ export const Route = createFileRoute("/examen")({
         property: "og:description",
         content: "Pon a prueba tu memoria con la tabla periódica muda de Nizeta.",
       },
+      { property: "og:url", content: "https://nizetalearning.lovable.app/examen" },
     ],
+    links: [{ rel: "canonical", href: "https://nizetalearning.lovable.app/examen" }],
   }),
   component: Examen,
 });

@@ -17,7 +17,9 @@ export const Route = createFileRoute("/aprender")({
         property: "og:description",
         content: "Memoriza los grupos y períodos con frases y símbolos resaltados.",
       },
+      { property: "og:url", content: "https://nizetalearning.lovable.app/aprender" },
     ],
+    links: [{ rel: "canonical", href: "https://nizetalearning.lovable.app/aprender" }],
   }),
   component: Aprender,
 });
