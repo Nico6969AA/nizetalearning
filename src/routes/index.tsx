@@ -3,6 +3,7 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { Box } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PeriodicGrid } from "@/components/PeriodicGrid";
+import { ElementProperties } from "@/components/ElementProperties";
 import { COLOR_CATEGORIA, Leyenda } from "@/components/ElementCell";
 import { ELEMENTOS, type Elemento } from "@/data/elements";
 import { mnemotecniaDe, trozos } from "@/data/mnemonics";
@@ -83,6 +84,7 @@ function Index() {
           {elegido.fila <= 7 ? elegido.col : "bloque f"}
         </p>
 
+        <ElementProperties element={elegido} />
         <Button type="button" size="sm" className="mt-4" onClick={() => setVisible(true)}><Box className="size-4" /> Ver átomo en 3D</Button>
 
         {regla ? (

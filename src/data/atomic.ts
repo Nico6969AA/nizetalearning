@@ -1,5 +1,5 @@
 /* Masas y configuraciones: Periodic-Table-JSON (Bowserinator), MIT. Neutrones estimados con la masa redondeada del isótopo representativo. */
-export const ATOMIC_DATA: { mass: number; configuration: string }[] = [
+const CONFIGURATION_DATA: { mass: number; configuration: string }[] = [
   { mass: 1, configuration: "1s1" }, // H
   { mass: 4, configuration: "1s2" }, // He
   { mass: 7, configuration: "1s2 2s1" }, // Li
@@ -130,3 +130,718 @@ export function orbitalsFor(z: number): Orbital[] {
     electrons: Number(part.slice(2)),
   }));
 }
+
+export type ElementProperties = { atomicMass: number; meltingK: number | null; boilingK: number | null; oxidationStates: string };
+/** PubChem Periodic Table, retrieved 2026-10-06. Missing measurements stay null. */
+const ELEMENT_PROPERTIES: ElementProperties[] = [
+  {
+    "atomicMass": 1.008,
+    "meltingK": 13.81,
+    "boilingK": 20.28,
+    "oxidationStates": "+1, -1"
+  },
+  {
+    "atomicMass": 4.0026,
+    "meltingK": null,
+    "boilingK": 4.22,
+    "oxidationStates": "0"
+  },
+  {
+    "atomicMass": 7.0,
+    "meltingK": 453.65,
+    "boilingK": 1615.0,
+    "oxidationStates": "+1"
+  },
+  {
+    "atomicMass": 9.012183,
+    "meltingK": 1560.0,
+    "boilingK": 2744.0,
+    "oxidationStates": "+2"
+  },
+  {
+    "atomicMass": 10.81,
+    "meltingK": 2348.0,
+    "boilingK": 4273.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 12.011,
+    "meltingK": null,
+    "boilingK": null,
+    "oxidationStates": "+4, +2, -4"
+  },
+  {
+    "atomicMass": 14.007,
+    "meltingK": 63.15,
+    "boilingK": 77.36,
+    "oxidationStates": "+5, +4, +3, +2, +1, -1, -2, -3"
+  },
+  {
+    "atomicMass": 15.999,
+    "meltingK": 54.36,
+    "boilingK": 90.2,
+    "oxidationStates": "-2"
+  },
+  {
+    "atomicMass": 18.99840316,
+    "meltingK": 53.53,
+    "boilingK": 85.03,
+    "oxidationStates": "-1"
+  },
+  {
+    "atomicMass": 20.18,
+    "meltingK": 24.56,
+    "boilingK": 27.07,
+    "oxidationStates": "0"
+  },
+  {
+    "atomicMass": 22.9897693,
+    "meltingK": 370.95,
+    "boilingK": 1156.0,
+    "oxidationStates": "+1"
+  },
+  {
+    "atomicMass": 24.305,
+    "meltingK": 923.0,
+    "boilingK": 1363.0,
+    "oxidationStates": "+2"
+  },
+  {
+    "atomicMass": 26.981538,
+    "meltingK": 933.437,
+    "boilingK": 2792.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 28.085,
+    "meltingK": 1687.0,
+    "boilingK": 3538.0,
+    "oxidationStates": "+4, +2, -4"
+  },
+  {
+    "atomicMass": 30.973762,
+    "meltingK": 317.3,
+    "boilingK": 553.65,
+    "oxidationStates": "+5, +3, -3"
+  },
+  {
+    "atomicMass": 32.07,
+    "meltingK": 388.36,
+    "boilingK": 717.75,
+    "oxidationStates": "+6, +4, -2"
+  },
+  {
+    "atomicMass": 35.45,
+    "meltingK": 171.65,
+    "boilingK": 239.11,
+    "oxidationStates": "+7, +5, +1, -1"
+  },
+  {
+    "atomicMass": 39.9,
+    "meltingK": 83.8,
+    "boilingK": 87.3,
+    "oxidationStates": "0"
+  },
+  {
+    "atomicMass": 39.0983,
+    "meltingK": 336.53,
+    "boilingK": 1032.0,
+    "oxidationStates": "+1"
+  },
+  {
+    "atomicMass": 40.08,
+    "meltingK": 1115.0,
+    "boilingK": 1757.0,
+    "oxidationStates": "+2"
+  },
+  {
+    "atomicMass": 44.95591,
+    "meltingK": 1814.0,
+    "boilingK": 3109.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 47.867,
+    "meltingK": 1941.0,
+    "boilingK": 3560.0,
+    "oxidationStates": "+4, +3, +2"
+  },
+  {
+    "atomicMass": 50.9415,
+    "meltingK": 2183.0,
+    "boilingK": 3680.0,
+    "oxidationStates": "+5, +4, +3, +2"
+  },
+  {
+    "atomicMass": 51.996,
+    "meltingK": 2180.0,
+    "boilingK": 2944.0,
+    "oxidationStates": "+6, +3, +2"
+  },
+  {
+    "atomicMass": 54.93804,
+    "meltingK": 1519.0,
+    "boilingK": 2334.0,
+    "oxidationStates": "+7, +4, +3, +2"
+  },
+  {
+    "atomicMass": 55.84,
+    "meltingK": 1811.0,
+    "boilingK": 3134.0,
+    "oxidationStates": "+3, +2"
+  },
+  {
+    "atomicMass": 58.93319,
+    "meltingK": 1768.0,
+    "boilingK": 3200.0,
+    "oxidationStates": "+3, +2"
+  },
+  {
+    "atomicMass": 58.693,
+    "meltingK": 1728.0,
+    "boilingK": 3186.0,
+    "oxidationStates": "+3, +2"
+  },
+  {
+    "atomicMass": 63.55,
+    "meltingK": 1357.77,
+    "boilingK": 2835.0,
+    "oxidationStates": "+2, +1"
+  },
+  {
+    "atomicMass": 65.4,
+    "meltingK": 692.68,
+    "boilingK": 1180.0,
+    "oxidationStates": "+2"
+  },
+  {
+    "atomicMass": 69.723,
+    "meltingK": 302.91,
+    "boilingK": 2477.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 72.63,
+    "meltingK": 1211.4,
+    "boilingK": 3106.0,
+    "oxidationStates": "+4, +2"
+  },
+  {
+    "atomicMass": 74.92159,
+    "meltingK": null,
+    "boilingK": null,
+    "oxidationStates": "+5, +3, -3"
+  },
+  {
+    "atomicMass": 78.97,
+    "meltingK": 493.65,
+    "boilingK": 958.0,
+    "oxidationStates": "+6, +4, -2"
+  },
+  {
+    "atomicMass": 79.9,
+    "meltingK": 265.95,
+    "boilingK": 331.95,
+    "oxidationStates": "+5, +1, -1"
+  },
+  {
+    "atomicMass": 83.8,
+    "meltingK": 115.79,
+    "boilingK": 119.93,
+    "oxidationStates": "0"
+  },
+  {
+    "atomicMass": 85.468,
+    "meltingK": 312.46,
+    "boilingK": 961.0,
+    "oxidationStates": "+1"
+  },
+  {
+    "atomicMass": 87.62,
+    "meltingK": 1050.0,
+    "boilingK": 1655.0,
+    "oxidationStates": "+2"
+  },
+  {
+    "atomicMass": 88.90584,
+    "meltingK": 1795.0,
+    "boilingK": 3618.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 91.22,
+    "meltingK": 2128.0,
+    "boilingK": 4682.0,
+    "oxidationStates": "+4"
+  },
+  {
+    "atomicMass": 92.90637,
+    "meltingK": 2750.0,
+    "boilingK": 5017.0,
+    "oxidationStates": "+5, +3"
+  },
+  {
+    "atomicMass": 95.95,
+    "meltingK": 2896.0,
+    "boilingK": 4912.0,
+    "oxidationStates": "+6"
+  },
+  {
+    "atomicMass": 96.90636,
+    "meltingK": 2430.0,
+    "boilingK": 4538.0,
+    "oxidationStates": "+7, +6, +4"
+  },
+  {
+    "atomicMass": 101.1,
+    "meltingK": 2607.0,
+    "boilingK": 4423.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 102.9055,
+    "meltingK": 2237.0,
+    "boilingK": 3968.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 106.42,
+    "meltingK": 1828.05,
+    "boilingK": 3236.0,
+    "oxidationStates": "+3, +2"
+  },
+  {
+    "atomicMass": 107.868,
+    "meltingK": 1234.93,
+    "boilingK": 2435.0,
+    "oxidationStates": "+1"
+  },
+  {
+    "atomicMass": 112.41,
+    "meltingK": 594.22,
+    "boilingK": 1040.0,
+    "oxidationStates": "+2"
+  },
+  {
+    "atomicMass": 114.818,
+    "meltingK": 429.75,
+    "boilingK": 2345.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 118.71,
+    "meltingK": 505.08,
+    "boilingK": 2875.0,
+    "oxidationStates": "+4, +2"
+  },
+  {
+    "atomicMass": 121.76,
+    "meltingK": 903.78,
+    "boilingK": 1860.0,
+    "oxidationStates": "+5, +3, -3"
+  },
+  {
+    "atomicMass": 127.6,
+    "meltingK": 722.66,
+    "boilingK": 1261.0,
+    "oxidationStates": "+6, +4, -2"
+  },
+  {
+    "atomicMass": 126.9045,
+    "meltingK": 386.85,
+    "boilingK": 457.55,
+    "oxidationStates": "+7, +5, +1, -1"
+  },
+  {
+    "atomicMass": 131.29,
+    "meltingK": 161.36,
+    "boilingK": 165.03,
+    "oxidationStates": "0"
+  },
+  {
+    "atomicMass": 132.905452,
+    "meltingK": 301.59,
+    "boilingK": 944.0,
+    "oxidationStates": "+1"
+  },
+  {
+    "atomicMass": 137.33,
+    "meltingK": 1000.0,
+    "boilingK": 2170.0,
+    "oxidationStates": "+2"
+  },
+  {
+    "atomicMass": 138.9055,
+    "meltingK": 1191.0,
+    "boilingK": 3737.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 140.116,
+    "meltingK": 1071.0,
+    "boilingK": 3697.0,
+    "oxidationStates": "+4, +3"
+  },
+  {
+    "atomicMass": 140.90766,
+    "meltingK": 1204.0,
+    "boilingK": 3793.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 144.24,
+    "meltingK": 1294.0,
+    "boilingK": 3347.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 144.91276,
+    "meltingK": 1315.0,
+    "boilingK": 3273.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 150.4,
+    "meltingK": 1347.0,
+    "boilingK": 2067.0,
+    "oxidationStates": "+3, +2"
+  },
+  {
+    "atomicMass": 151.964,
+    "meltingK": 1095.0,
+    "boilingK": 1802.0,
+    "oxidationStates": "+3, +2"
+  },
+  {
+    "atomicMass": 157.25,
+    "meltingK": 1586.0,
+    "boilingK": 3546.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 158.92535,
+    "meltingK": 1629.0,
+    "boilingK": 3503.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 162.5,
+    "meltingK": 1685.0,
+    "boilingK": 2840.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 164.93033,
+    "meltingK": 1747.0,
+    "boilingK": 2973.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 167.26,
+    "meltingK": 1802.0,
+    "boilingK": 3141.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 168.93422,
+    "meltingK": 1818.0,
+    "boilingK": 2223.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 173.05,
+    "meltingK": 1092.0,
+    "boilingK": 1469.0,
+    "oxidationStates": "+3, +2"
+  },
+  {
+    "atomicMass": 174.9667,
+    "meltingK": 1936.0,
+    "boilingK": 3675.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 178.49,
+    "meltingK": 2506.0,
+    "boilingK": 4876.0,
+    "oxidationStates": "+4"
+  },
+  {
+    "atomicMass": 180.9479,
+    "meltingK": 3290.0,
+    "boilingK": 5731.0,
+    "oxidationStates": "+5"
+  },
+  {
+    "atomicMass": 183.84,
+    "meltingK": 3695.0,
+    "boilingK": 5828.0,
+    "oxidationStates": "+6"
+  },
+  {
+    "atomicMass": 186.207,
+    "meltingK": 3459.0,
+    "boilingK": 5869.0,
+    "oxidationStates": "+7, +6, +4"
+  },
+  {
+    "atomicMass": 190.2,
+    "meltingK": 3306.0,
+    "boilingK": 5285.0,
+    "oxidationStates": "+4, +3"
+  },
+  {
+    "atomicMass": 192.22,
+    "meltingK": 2719.0,
+    "boilingK": 4701.0,
+    "oxidationStates": "+4, +3"
+  },
+  {
+    "atomicMass": 195.08,
+    "meltingK": 2041.55,
+    "boilingK": 4098.0,
+    "oxidationStates": "+4, +2"
+  },
+  {
+    "atomicMass": 196.96657,
+    "meltingK": 1337.33,
+    "boilingK": 3129.0,
+    "oxidationStates": "+3, +1"
+  },
+  {
+    "atomicMass": 200.59,
+    "meltingK": 234.32,
+    "boilingK": 629.88,
+    "oxidationStates": "+2, +1"
+  },
+  {
+    "atomicMass": 204.383,
+    "meltingK": 577.0,
+    "boilingK": 1746.0,
+    "oxidationStates": "+3, +1"
+  },
+  {
+    "atomicMass": 207.0,
+    "meltingK": 600.61,
+    "boilingK": 2022.0,
+    "oxidationStates": "+4, +2"
+  },
+  {
+    "atomicMass": 208.9804,
+    "meltingK": 544.55,
+    "boilingK": 1837.0,
+    "oxidationStates": "+5, +3"
+  },
+  {
+    "atomicMass": 208.98243,
+    "meltingK": 527.0,
+    "boilingK": 1235.0,
+    "oxidationStates": "+4, +2"
+  },
+  {
+    "atomicMass": 209.98715,
+    "meltingK": 575.0,
+    "boilingK": null,
+    "oxidationStates": "7, 5, 3, 1, -1"
+  },
+  {
+    "atomicMass": 222.01758,
+    "meltingK": 202.0,
+    "boilingK": 211.45,
+    "oxidationStates": "0"
+  },
+  {
+    "atomicMass": 223.01973,
+    "meltingK": 300.0,
+    "boilingK": null,
+    "oxidationStates": "+1"
+  },
+  {
+    "atomicMass": 226.02541,
+    "meltingK": 973.0,
+    "boilingK": 1413.0,
+    "oxidationStates": "+2"
+  },
+  {
+    "atomicMass": 227.02775,
+    "meltingK": 1324.0,
+    "boilingK": 3471.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 232.038,
+    "meltingK": 2023.0,
+    "boilingK": 5061.0,
+    "oxidationStates": "+4"
+  },
+  {
+    "atomicMass": 231.03588,
+    "meltingK": 1845.0,
+    "boilingK": null,
+    "oxidationStates": "+5, +4"
+  },
+  {
+    "atomicMass": 238.0289,
+    "meltingK": 1408.0,
+    "boilingK": 4404.0,
+    "oxidationStates": "+6, +5, +4, +3"
+  },
+  {
+    "atomicMass": 237.048172,
+    "meltingK": 917.0,
+    "boilingK": 4175.0,
+    "oxidationStates": "+6, +5, +4, +3"
+  },
+  {
+    "atomicMass": 244.0642,
+    "meltingK": 913.0,
+    "boilingK": 3501.0,
+    "oxidationStates": "+6, +5, +4, +3"
+  },
+  {
+    "atomicMass": 243.06138,
+    "meltingK": 1449.0,
+    "boilingK": 2284.0,
+    "oxidationStates": "+6, +5, +4, +3"
+  },
+  {
+    "atomicMass": 247.07035,
+    "meltingK": 1618.0,
+    "boilingK": 3400.0,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 247.07031,
+    "meltingK": 1323.0,
+    "boilingK": null,
+    "oxidationStates": "+4, +3"
+  },
+  {
+    "atomicMass": 251.07959,
+    "meltingK": 1173.0,
+    "boilingK": null,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 252.083,
+    "meltingK": 1133.0,
+    "boilingK": null,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 257.09511,
+    "meltingK": 1800.0,
+    "boilingK": null,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 258.09843,
+    "meltingK": 1100.0,
+    "boilingK": null,
+    "oxidationStates": "+3, +2"
+  },
+  {
+    "atomicMass": 259.101,
+    "meltingK": 1100.0,
+    "boilingK": null,
+    "oxidationStates": "+3, +2"
+  },
+  {
+    "atomicMass": 266.12,
+    "meltingK": 1900.0,
+    "boilingK": null,
+    "oxidationStates": "+3"
+  },
+  {
+    "atomicMass": 267.122,
+    "meltingK": null,
+    "boilingK": null,
+    "oxidationStates": "+4"
+  },
+  {
+    "atomicMass": 268.126,
+    "meltingK": null,
+    "boilingK": null,
+    "oxidationStates": "5, 4, 3"
+  },
+  {
+    "atomicMass": 269.128,
+    "meltingK": null,
+    "boilingK": null,
+    "oxidationStates": "6, 5, 4, 3, 0"
+  },
+  {
+    "atomicMass": 270.133,
+    "meltingK": null,
+    "boilingK": null,
+    "oxidationStates": "7, 5, 4, 3"
+  },
+  {
+    "atomicMass": 269.1336,
+    "meltingK": null,
+    "boilingK": null,
+    "oxidationStates": "8, 6, 5, 4, 3, 2"
+  },
+  {
+    "atomicMass": 277.154,
+    "meltingK": null,
+    "boilingK": null,
+    "oxidationStates": "9, 8, 6, 4, 3, 1"
+  },
+  {
+    "atomicMass": 282.166,
+    "meltingK": null,
+    "boilingK": null,
+    "oxidationStates": "8, 6, 4, 2, 0"
+  },
+  {
+    "atomicMass": 282.169,
+    "meltingK": null,
+    "boilingK": null,
+    "oxidationStates": "5, 3, 1, -1"
+  },
+  {
+    "atomicMass": 286.179,
+    "meltingK": null,
+    "boilingK": null,
+    "oxidationStates": "2, 1, 0"
+  },
+  {
+    "atomicMass": 286.182,
+    "meltingK": null,
+    "boilingK": null,
+    "oxidationStates": ""
+  },
+  {
+    "atomicMass": 290.192,
+    "meltingK": null,
+    "boilingK": null,
+    "oxidationStates": "6, 4,2, 1, 0"
+  },
+  {
+    "atomicMass": 290.196,
+    "meltingK": null,
+    "boilingK": null,
+    "oxidationStates": "3, 1"
+  },
+  {
+    "atomicMass": 293.205,
+    "meltingK": null,
+    "boilingK": null,
+    "oxidationStates": "+4, +2, -2"
+  },
+  {
+    "atomicMass": 294.211,
+    "meltingK": null,
+    "boilingK": null,
+    "oxidationStates": "+5, +3, +1, -1"
+  },
+  {
+    "atomicMass": 295.216,
+    "meltingK": null,
+    "boilingK": null,
+    "oxidationStates": "+6, +4, +2, +1, 0, -1"
+  }
+];
+
+export const ATOMIC_DATA = CONFIGURATION_DATA.map((data, index) => ({ ...data, ...ELEMENT_PROPERTIES[index] }));

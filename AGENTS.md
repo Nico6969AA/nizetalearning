@@ -9,5 +9,7 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Keep atomic configuration and representative mass data in `src/data/atomic.ts`; derive educational particle/orbital views from it so all 118 elements share one source.
+- Keep atomic configurations, representative nucleon mass numbers and sourced element properties in `src/data/atomic.ts`; derive educational views from this single source for all elements.
 - Mount the atom viewer only after an element is selected and hydration completes; WebGL depends on browser APIs and should not alter server rendering.
+- Keep deterministic close-packing and hydrogen-like cloud sampling in `src/data/atomic-view.ts`; separate testable geometry from React rendering and label the compressed educational scale.
+- Render sourced element properties through `ElementProperties`; explicitly label missing values, pressure exceptions and predicted states rather than filling gaps with invented measurements.
