@@ -96,7 +96,7 @@ function Cloud({ orbital, palette }: { orbital: Orbital; palette: Palette }) {
   useEffect(() => () => geometry.dispose(), [geometry]);
   useEffect(() => () => sprite.dispose(), [sprite]);
   return <points geometry={geometry}>
-    <pointsMaterial map={sprite} size={0.07 + orbital.level * 0.008} color={palette.cloud} transparent opacity={0.7} depthWrite={false} sizeAttenuation blending={THREE.AdditiveBlending} />
+    <pointsMaterial map={sprite} size={0.12 + orbital.level * 0.012} color={palette.cloud} transparent opacity={0.8} depthWrite={false} sizeAttenuation blending={THREE.AdditiveBlending} />
   </points>;
 }
 
@@ -125,7 +125,7 @@ function AtomScene({ element, mode, orbital, detail, palette, paused, onSelect }
     <ambientLight intensity={0.75} /><pointLight position={[5, 5, 7]} intensity={45} />
     <Environment><Lightformer intensity={2} position={[0, 5, 3]} scale={[10, 10, 1]} /></Environment>
     {detail ? <QuarkDetail part={detail} palette={palette} paused={paused} /> : <>
-      <Nucleus protons={element.z} neutrons={Math.max(0, (data?.mass ?? element.z) - element.z)} palette={palette} onSelect={onSelect} />
+      <group scale={mode === "cuantico" ? 0.2 : 1}><Nucleus protons={element.z} neutrons={Math.max(0, (data?.mass ?? element.z) - element.z)} palette={palette} onSelect={onSelect} /></group>
       {mode === "particulas" ? shells.map((amount, i) => <ElectronShell key={i} shell={i + 1} amount={amount ?? 0} palette={palette} paused={paused} />) : <Cloud orbital={orbital} palette={palette} />}
     </>}
     <OrbitControls key={`${mode}-${orbital.level}-${detail}`} enablePan={false} minDistance={3} maxDistance={30} enableDamping />
