@@ -85,6 +85,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Nizeta: aprende la tabla periódica con reglas mnemotécnicas y ponte a prueba con la tabla muda.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Nizeta" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
