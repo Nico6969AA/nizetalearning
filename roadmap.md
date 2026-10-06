@@ -1,3 +1,6 @@
 - [x] Visualizar en 3D el átomo seleccionado, sus nucleones, electrones y quarks.
 - [x] Alternar a orbitales cuánticos con nubes de probabilidad.
 - [x] Verificar la interacción y el renderizado en ordenador y móvil.
+- [ ] Compactar el núcleo y mejorar la claridad de las nubes y los niveles cuánticos.
+- [ ] Añadir masa atómica, temperaturas de fusión y ebullición y estados de oxidación de los 118 elementos.
+- [ ] Verificar las propiedades y las vistas actualizadas.
