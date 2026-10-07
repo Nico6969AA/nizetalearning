@@ -5,4 +5,4 @@
 - [x] Añadir masa atómica, temperaturas de fusión y ebullición y estados de oxidación de los 118 elementos; marcar datos no disponibles y excepciones de presión.
 - [x] Verificar las propiedades y las vistas actualizadas.
 - [x] Hacer la web indexable: sitemap.xml, robots.txt con Sitemap, canonical y og:url por ruta.
-- [ ] Tabla periódica personalizada: crear elementos propios (z > 118) con nombre y propiedades, persistidos en el navegador.
+- [x] Tabla periódica personalizada: crear elementos propios (z > 118) con nombre y propiedades, persistidos en el navegador.
