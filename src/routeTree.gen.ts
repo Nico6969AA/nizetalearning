@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AprenderRouteImport } from './routes/aprender'
 import { Route as ExamenRouteImport } from './routes/examen'
+import { Route as PersonalizadaRouteImport } from './routes/personalizada'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +29,44 @@ const ExamenRoute = ExamenRouteImport.update({
   path: '/examen',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PersonalizadaRoute = PersonalizadaRouteImport.update({
+  id: '/personalizada',
+  path: '/personalizada',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/aprender': typeof AprenderRoute
   '/examen': typeof ExamenRoute
+  '/personalizada': typeof PersonalizadaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/aprender': typeof AprenderRoute
   '/examen': typeof ExamenRoute
+  '/personalizada': typeof PersonalizadaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/aprender': typeof AprenderRoute
   '/examen': typeof ExamenRoute
+  '/personalizada': typeof PersonalizadaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/aprender' | '/examen'
+  fullPaths: '/' | '/aprender' | '/examen' | '/personalizada'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/aprender' | '/examen'
-  id: '__root__' | '/' | '/aprender' | '/examen'
+  to: '/' | '/aprender' | '/examen' | '/personalizada'
+  id: '__root__' | '/' | '/aprender' | '/examen' | '/personalizada'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AprenderRoute: typeof AprenderRoute
   ExamenRoute: typeof ExamenRoute
+  PersonalizadaRoute: typeof PersonalizadaRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +92,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExamenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/personalizada': {
+      id: '/personalizada'
+      path: '/personalizada'
+      fullPath: '/personalizada'
+      preLoaderRoute: typeof PersonalizadaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AprenderRoute: AprenderRoute,
   ExamenRoute: ExamenRoute,
+  PersonalizadaRoute: PersonalizadaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
