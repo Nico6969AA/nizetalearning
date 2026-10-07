@@ -82,11 +82,12 @@ function Personalizada() {
   }
 
   function agregar() {
+    const oxidacion = form.oxidacion?.trim();
     const nuevo: ElementoPersonalizado = {
       ...form,
       simbolo: form.simbolo.trim(),
       nombre: form.nombre.trim(),
-      oxidacion: form.oxidacion?.trim() || undefined,
+      ...(oxidacion ? { oxidacion } : {}),
     };
     const problema = validarElemento(nuevo, elementos);
     if (problema) {
