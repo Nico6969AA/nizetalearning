@@ -123,6 +123,7 @@ const PESTANAS = [
   { to: "/", label: "Tabla" },
   { to: "/aprender", label: "Aprender" },
   { to: "/examen", label: "Examen" },
+  { to: "/personalizada", label: "Personalizada" },
 ] as const;
 
 function RootComponent() {
