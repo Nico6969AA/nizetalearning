@@ -14,7 +14,102 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      custom_elements: {
+        Row: {
+          categoria: string
+          created_at: string
+          ebullicion_c: number | null
+          fusion_c: number | null
+          id: string
+          masa: number | null
+          nombre: string
+          oxidacion: string | null
+          simbolo: string
+          updated_at: string
+          user_id: string
+          z: number
+        }
+        Insert: {
+          categoria: string
+          created_at?: string
+          ebullicion_c?: number | null
+          fusion_c?: number | null
+          id?: string
+          masa?: number | null
+          nombre: string
+          oxidacion?: string | null
+          simbolo: string
+          updated_at?: string
+          user_id: string
+          z: number
+        }
+        Update: {
+          categoria?: string
+          created_at?: string
+          ebullicion_c?: number | null
+          fusion_c?: number | null
+          id?: string
+          masa?: number | null
+          nombre?: string
+          oxidacion?: string | null
+          simbolo?: string
+          updated_at?: string
+          user_id?: string
+          z?: number
+        }
+        Relationships: []
+      }
+      login_attempts: {
+        Row: {
+          at: string
+          id: number
+          ip: string | null
+          ok: boolean
+          username_normalized: string
+        }
+        Insert: {
+          at?: string
+          id?: never
+          ip?: string | null
+          ok: boolean
+          username_normalized: string
+        }
+        Update: {
+          at?: string
+          id?: never
+          ip?: string | null
+          ok?: boolean
+          username_normalized?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          provider: string
+          updated_at: string
+          username: string
+          username_normalized: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          provider?: string
+          updated_at?: string
+          username: string
+          username_normalized: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          provider?: string
+          updated_at?: string
+          username?: string
+          username_normalized?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
