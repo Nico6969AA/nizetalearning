@@ -128,11 +128,59 @@ const PESTANAS = [
   { to: "/personalizada", label: "Personalizada" },
 ] as const;
 
+function AccionesHeader() {
+  const { cargando, userId, nombre } = useSesion();
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  if (cargando) return null;
+
+  if (!userId) {
+    return (
+      <div className="flex gap-2">
+        <Link
+          to="/aprender"
+          className="rounded-full bg-glow px-3.5 py-2 text-sm font-medium text-ink"
+        >
+          Aprender
+        </Link>
+        <Link
+          to="/auth"
+          className="glass rounded-full px-3.5 py-2 text-sm font-medium text-foreground"
+        >
+          Iniciar sesión
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <span className="glass hidden max-w-[10rem] truncate rounded-full px-3 py-2 text-sm font-medium text-foreground sm:block">
+        {nombre ?? "Cuenta"}
+      </span>
+      <button
+        type="button"
+        onClick={async () => {
+          await queryClient.cancelQueries();
+          queryClient.clear();
+          await supabase.auth.signOut();
+          await router.navigate({ to: "/", replace: true });
+        }}
+        className="glass rounded-full px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+      >
+        Salir
+      </button>
+    </div>
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
+      <ProveedorSesion queryClient={queryClient}>
       <div className="relative min-h-screen overflow-hidden bg-ink font-display text-foreground">
         <div className="pointer-events-none absolute -top-24 -left-20 size-72 rounded-full bg-glow/20 blur-3xl" />
         <div className="pointer-events-none absolute top-1/3 -right-24 size-80 rounded-full bg-sky/15 blur-3xl" />
@@ -151,20 +199,7 @@ function RootComponent() {
                 </span>
               </span>
             </Link>
-            <div className="flex gap-2">
-              <Link
-                to="/aprender"
-                className="rounded-full bg-glow px-3.5 py-2 text-sm font-medium text-ink"
-              >
-                Aprender
-              </Link>
-              <Link
-                to="/examen"
-                className="glass rounded-full px-3.5 py-2 text-sm font-medium text-foreground"
-              >
-                Examen
-              </Link>
-            </div>
+            <AccionesHeader />
           </header>
 
           <nav className="glass mb-5 flex gap-1 rounded-full p-1">
