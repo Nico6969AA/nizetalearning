@@ -218,6 +218,7 @@ function RootComponent() {
 
           <Outlet />
         </div>
+        </ProveedorSesion>
       </div>
     </QueryClientProvider>
   );
