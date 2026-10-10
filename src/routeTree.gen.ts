@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AprenderRouteImport } from './routes/aprender'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ExamenRouteImport } from './routes/examen'
 import { Route as PersonalizadaRouteImport } from './routes/personalizada'
 
@@ -22,6 +23,11 @@ const IndexRoute = IndexRouteImport.update({
 const AprenderRoute = AprenderRouteImport.update({
   id: '/aprender',
   path: '/aprender',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExamenRoute = ExamenRouteImport.update({
@@ -38,12 +44,14 @@ const PersonalizadaRoute = PersonalizadaRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/aprender': typeof AprenderRoute
+  '/auth': typeof AuthRoute
   '/examen': typeof ExamenRoute
   '/personalizada': typeof PersonalizadaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/aprender': typeof AprenderRoute
+  '/auth': typeof AuthRoute
   '/examen': typeof ExamenRoute
   '/personalizada': typeof PersonalizadaRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/aprender': typeof AprenderRoute
+  '/auth': typeof AuthRoute
   '/examen': typeof ExamenRoute
   '/personalizada': typeof PersonalizadaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/aprender' | '/examen' | '/personalizada'
+  fullPaths: '/' | '/aprender' | '/auth' | '/examen' | '/personalizada'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/aprender' | '/examen' | '/personalizada'
-  id: '__root__' | '/' | '/aprender' | '/examen' | '/personalizada'
+  to: '/' | '/aprender' | '/auth' | '/examen' | '/personalizada'
+  id: '__root__' | '/' | '/aprender' | '/auth' | '/examen' | '/personalizada'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AprenderRoute: typeof AprenderRoute
+  AuthRoute: typeof AuthRoute
   ExamenRoute: typeof ExamenRoute
   PersonalizadaRoute: typeof PersonalizadaRoute
 }
@@ -83,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/aprender'
       fullPath: '/aprender'
       preLoaderRoute: typeof AprenderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/examen': {
@@ -105,6 +122,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AprenderRoute: AprenderRoute,
+  AuthRoute: AuthRoute,
   ExamenRoute: ExamenRoute,
   PersonalizadaRoute: PersonalizadaRoute,
 }

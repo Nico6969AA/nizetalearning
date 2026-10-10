@@ -1,9 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { useEffect, useRef, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { COLOR_CATEGORIA, Leyenda } from "@/components/ElementCell";
 import type { Categoria } from "@/data/elements";
+import { useSesion } from "@/hooks/use-auth";
+import {
+  borrarElemento,
+  guardarElemento,
+  guardarElementos,
+  listarElementos,
+} from "@/lib/custom-elements.functions";
 import {
   cargarPersonalizados,
   guardarPersonalizados,
@@ -55,10 +63,18 @@ const VACIO: ElementoPersonalizado = {
 };
 
 function Personalizada() {
+  const { userId } = useSesion();
+  const listarFn = useServerFn(listarElementos);
+  const guardarListaFn = useServerFn(guardarElementos);
+  const guardarUnoFn = useServerFn(guardarElemento);
+  const borrarFn = useServerFn(borrarElemento);
+
   const [elementos, setElementos] = useState<ElementoPersonalizado[]>([]);
   const [form, setForm] = useState<ElementoPersonalizado>(VACIO);
   const [error, setError] = useState<string | null>(null);
   const [cargado, setCargado] = useState(false);
+  const [avisoSincro, setAvisoSincro] = useState<string | null>(null);
+  const elementosRef = useRef<ElementoPersonalizado[]>([]);
 
   useEffect(() => {
     setElementos(cargarPersonalizados());
@@ -67,7 +83,34 @@ function Personalizada() {
 
   useEffect(() => {
     if (cargado) guardarPersonalizados(elementos);
+    elementosRef.current = elementos;
   }, [elementos, cargado]);
+
+  // Al iniciar sesión: unir lo guardado en el navegador con lo de la cuenta.
+  // Si comparten número atómico gana lo local; nunca se borra nada.
+  useEffect(() => {
+    if (!userId || !cargado) return;
+    let activo = true;
+    (async () => {
+      try {
+        const remotos = await listarFn();
+        if (!activo) return;
+        const mapa = new Map<number, ElementoPersonalizado>();
+        for (const e of remotos) mapa.set(e.z, e);
+        for (const e of elementosRef.current) mapa.set(e.z, e);
+        const unidos = [...mapa.values()].sort((a, b) => a.z - b.z);
+        setElementos(unidos);
+        await guardarListaFn({ data: { lista: unidos } });
+        if (activo) setAvisoSincro(null);
+      } catch {
+        if (activo)
+          setAvisoSincro("No se han podido sincronizar tus elementos con tu cuenta.");
+      }
+    })();
+    return () => {
+      activo = false;
+    };
+  }, [userId, cargado, listarFn, guardarListaFn]);
 
   function actualizar(campo: keyof ElementoPersonalizado, valor: string) {
     setForm((f) => ({
@@ -97,10 +140,20 @@ function Personalizada() {
     setError(null);
     setElementos((lista) => [...lista, nuevo].sort((a, b) => a.z - b.z));
     setForm({ ...VACIO, z: nuevo.z + 1 });
+    if (userId) {
+      guardarUnoFn({ data: { elemento: nuevo } }).catch(() =>
+        setAvisoSincro("No se ha podido guardar en tu cuenta. Se conserva en este navegador."),
+      );
+    }
   }
 
   function borrar(z: number) {
     setElementos((lista) => lista.filter((e) => e.z !== z));
+    if (userId) {
+      borrarFn({ data: { z } }).catch(() =>
+        setAvisoSincro("No se ha podido borrar en tu cuenta. Vuelve a intentarlo."),
+      );
+    }
   }
 
   const filas = elementos.length
@@ -211,6 +264,11 @@ function Personalizada() {
         </div>
 
         {error && <p className="mt-2.5 text-sm text-rose">{error}</p>}
+        {avisoSincro && (
+          <p role="alert" className="mt-2.5 text-sm text-rose">
+            {avisoSincro}
+          </p>
+        )}
 
         <Button type="button" size="sm" className="mt-3" onClick={agregar}>
           <Plus className="size-4" /> Añadir a la tabla
@@ -220,7 +278,10 @@ function Personalizada() {
       <section className="glass mt-5 rounded-2xl p-3">
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-base font-semibold">Tu tabla extendida</h2>
-          <span className="font-mono text-[10px] tracking-wider text-mist">Período 8+</span>
+          <span className="font-mono text-[10px] tracking-wider text-mist">
+            {userId ? "Sincronizado con tu cuenta · " : "Guardado en este navegador · "}
+            Período 8+
+          </span>
         </div>
 
         <Leyenda />

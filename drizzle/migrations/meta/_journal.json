@@ -8,6 +8,13 @@
       "when": 1791552653769,
       "tag": "0000_auth_profiles_and_custom_elements",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791641670792,
+      "tag": "0001_migration",
+      "breakpoints": true
     }
   ]
 }

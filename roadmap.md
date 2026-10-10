@@ -6,3 +6,6 @@
 - [x] Verificar las propiedades y las vistas actualizadas.
 - [x] Hacer la web indexable: sitemap.xml, robots.txt con Sitemap, canonical y og:url por ruta.
 - [x] Tabla periódica personalizada: crear elementos propios (z > 118) con nombre y propiedades, persistidos en el navegador.
+- [x] Sistema de cuentas: registro con nombre de usuario y contraseña (sin email), inicio con Google, sesiones seguras.
+- [x] Límite de intentos de acceso por usuario/IP y de registros por IP.
+- [x] Tabla personalizada sincronizada con la cuenta (fusión sin pérdidas; lo local gana) y respaldo anónimo en el navegador.

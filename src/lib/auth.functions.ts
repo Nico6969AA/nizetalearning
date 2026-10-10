@@ -1,4 +1,5 @@
-import { createServerFn, getRequest } from "@tanstack/react-start";
+import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
@@ -61,6 +62,7 @@ export const registrarUsuario = createServerFn({ method: "POST" })
     const { error: errorPerfil } = await supabaseAdmin
       .from("profiles")
       .insert({
+        id: crypto.randomUUID(),
         username: data.username,
         username_normalized: data.username,
         provider: "password",
@@ -161,8 +163,8 @@ export const miPerfil = createServerFn({ method: "GET" })
     // un nombre derivado del correo. Para cuentas locales el correo es sintético
     // `<username>@nizeta.local`, así que la parte local es el propio nombre.
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const bruto =
-      (context.claims?.email as string | undefined)?.split("@")[0] ?? "usuario";
+    const correo = (context.claims as { email?: string } | undefined)?.email;
+    const bruto = correo?.split("@")[0] ?? "usuario";
     const base = /^[A-Za-z0-9_]{3,20}$/.test(bruto)
       ? bruto
       : `usuario${userId.slice(0, 6)}`;
@@ -170,7 +172,11 @@ export const miPerfil = createServerFn({ method: "GET" })
       const candidato = intento === 0 ? base : `${base}${intento + 1}`;
       const { data: creado, error } = await supabaseAdmin
         .from("profiles")
-        .insert({ username: candidato, username_normalized: normalizarUsername(candidato) })
+        .insert({
+          id: userId,
+          username: candidato,
+          username_normalized: normalizarUsername(candidato),
+        })
         .select("username")
         .single();
       if (!error && creado) return { nombre: creado.username as string };
