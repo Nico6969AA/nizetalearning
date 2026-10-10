@@ -146,7 +146,7 @@ function AccionesHeader() {
         </Link>
         <Link
           to="/auth"
-          search={{}}
+          search={{ redirect: undefined }}
           className="glass rounded-full px-3.5 py-2 text-sm font-medium text-foreground"
         >
           Iniciar sesión
