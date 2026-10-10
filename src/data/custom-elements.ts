@@ -5,10 +5,10 @@ export interface ElementoPersonalizado {
   simbolo: string;
   nombre: string;
   categoria: Categoria;
-  masa?: number;
-  fusionC?: number;
-  ebullicionC?: number;
-  oxidacion?: string;
+  masa?: number | undefined;
+  fusionC?: number | undefined;
+  ebullicionC?: number | undefined;
+  oxidacion?: string | undefined;
 }
 
 const CLAVE = "nizeta-elementos-personalizados";

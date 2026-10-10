@@ -62,22 +62,23 @@ function deFila(row: {
   z: number;
   simbolo: string;
   nombre: string;
-  categoria: (typeof CATEGORIAS)[number];
+  categoria: string;
   masa: number | null;
   fusion_c: number | null;
   ebullicion_c: number | null;
   oxidacion: string | null;
 }): ElementoPersonalizado {
-  return {
+  const elemento: ElementoPersonalizado = {
     z: row.z,
     simbolo: row.simbolo,
     nombre: row.nombre,
-    categoria: row.categoria,
-    masa: row.masa ?? undefined,
-    fusionC: row.fusion_c ?? undefined,
-    ebullicionC: row.ebullicion_c ?? undefined,
-    oxidacion: row.oxidacion ?? undefined,
+    categoria: row.categoria as ElementoPersonalizado["categoria"],
   };
+  if (row.masa !== null) elemento.masa = row.masa;
+  if (row.fusion_c !== null) elemento.fusionC = row.fusion_c;
+  if (row.ebullicion_c !== null) elemento.ebullicionC = row.ebullicion_c;
+  if (row.oxidacion !== null) elemento.oxidacion = row.oxidacion;
+  return elemento;
 }
 
 export const listarElementos = createServerFn({ method: "GET" })

@@ -21,7 +21,7 @@ import {
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (busqueda: Record<string, unknown>) => ({
-    redirect: typeof busqueda.redirect === "string" ? busqueda.redirect : undefined,
+    redirect: typeof busqueda['redirect'] === 'string' ? busqueda['redirect'] : undefined,
   }),
   head: () => ({
     meta: [
