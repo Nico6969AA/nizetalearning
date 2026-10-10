@@ -13,3 +13,5 @@
 - Mount the atom viewer only after an element is selected and hydration completes; WebGL depends on browser APIs and should not alter server rendering.
 - Keep deterministic close-packing and hydrogen-like cloud sampling in `src/data/atomic-view.ts`; separate testable geometry from React rendering and label the compressed educational scale.
 - Render sourced element properties through `ElementProperties`; explicitly label missing values, pressure exceptions and predicted states rather than filling gaps with invented measurements.
+- Accounts use Supabase Auth with synthetic emails `<username>@nizeta.local`; never collect or surface a real email for password accounts. Registration inserts the `profiles` row first (unique `username_normalized` resolves races), then the auth user; roll back the profile row if the auth user fails.
+- `custom_elements` is the per-account store for the personalized table; localStorage stays the anonymous fallback. On sign-in, merge with a union (local wins on equal `z`), never delete server rows during merge.
