@@ -64,6 +64,7 @@ export type Database = {
           at: string
           id: number
           ip: string | null
+          kind: string
           ok: boolean
           username_normalized: string
         }
@@ -71,6 +72,7 @@ export type Database = {
           at?: string
           id?: never
           ip?: string | null
+          kind?: string
           ok: boolean
           username_normalized: string
         }
@@ -78,6 +80,7 @@ export type Database = {
           at?: string
           id?: never
           ip?: string | null
+          kind?: string
           ok?: boolean
           username_normalized?: string
         }
