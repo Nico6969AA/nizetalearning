@@ -264,6 +264,11 @@ function Personalizada() {
         </div>
 
         {error && <p className="mt-2.5 text-sm text-rose">{error}</p>}
+        {avisoSincro && (
+          <p role="alert" className="mt-2.5 text-sm text-rose">
+            {avisoSincro}
+          </p>
+        )}
 
         <Button type="button" size="sm" className="mt-3" onClick={agregar}>
           <Plus className="size-4" /> Añadir a la tabla
@@ -273,7 +278,10 @@ function Personalizada() {
       <section className="glass mt-5 rounded-2xl p-3">
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-base font-semibold">Tu tabla extendida</h2>
-          <span className="font-mono text-[10px] tracking-wider text-mist">Período 8+</span>
+          <span className="font-mono text-[10px] tracking-wider text-mist">
+            {userId ? "Sincronizado con tu cuenta · " : "Guardado en este navegador · "}
+            Período 8+
+          </span>
         </div>
 
         <Leyenda />
