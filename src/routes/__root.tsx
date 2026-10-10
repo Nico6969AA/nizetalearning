@@ -218,8 +218,8 @@ function RootComponent() {
 
           <Outlet />
         </div>
-        </ProveedorSesion>
       </div>
+      </ProveedorSesion>
     </QueryClientProvider>
   );
 }
